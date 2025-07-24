@@ -61,7 +61,7 @@ def print_header():
     print("="*60 + "\n")
 
 
-async def create_story(theme: str, page_limit: int = 3, show_monitor: bool = False):
+async def create_story(theme: str, page_limit: int = 3, show_monitor: bool = False, protagonist_name: str = None):
     """Create an SCP story with the given theme."""
     print(f"\nStarting story creation with theme: '{theme}'")
     print(f"Target length: {page_limit} pages (~{page_limit * 300} words)")
@@ -71,7 +71,7 @@ async def create_story(theme: str, page_limit: int = 3, show_monitor: bool = Fal
     print("\nInitializing Writer, Reader, and Expert agents...")
     
     # Create coordinator with story configuration
-    story_config = StoryConfig(page_limit=page_limit)
+    story_config = StoryConfig(page_limit=page_limit, protagonist_name=protagonist_name)
     coordinator = SCPCoordinator(story_config)
     
     # Start progress monitoring if requested
@@ -191,6 +191,7 @@ def main():
         theme = args.theme
         page_limit = args.pages
         show_monitor = args.monitor
+        protagonist_name = None  # No protagonist name from command line yet
     else:
         # Interactive mode - collect all parameters
         print("Welcome to SCP Writer interactive mode!")
@@ -217,6 +218,11 @@ def main():
         else:
             page_limit = 3
             
+        # Get optional protagonist name
+        print(f"\nWould you like to specify a protagonist name? (optional)")
+        print("Leave blank for AI to create a unique character")
+        protagonist_name = input("Protagonist name: ").strip()
+            
         # Get monitor preference
         print(f"\nWould you like to see progress monitoring during creation?")
         monitor_input = input("Enable monitoring? (y/N): ").strip().lower()
@@ -228,6 +234,10 @@ def main():
         print("="*60)
         print(f"Theme: {theme}")
         print(f"Target length: {page_limit} pages (~{page_limit * 300} words)")
+        if protagonist_name:
+            print(f"Protagonist: {protagonist_name}")
+        else:
+            print(f"Protagonist: AI will create unique character")
         print(f"Progress monitoring: {'Enabled' if show_monitor else 'Disabled'}")
         print("="*60)
         
@@ -238,7 +248,7 @@ def main():
     
     # Run the async story creation
     try:
-        asyncio.run(create_story(theme, page_limit=page_limit, show_monitor=show_monitor))
+        asyncio.run(create_story(theme, page_limit=page_limit, show_monitor=show_monitor, protagonist_name=protagonist_name))
     except Exception as e:
         logger.error(f"Fatal error: {e}")
         print(f"\n❌ Fatal error: {e}")

@@ -24,9 +24,10 @@ logger = logging.getLogger(__name__)
 class StoryConfig:
     """Configuration for story parameters with flexible page limits."""
     
-    def __init__(self, page_limit: int = 3, words_per_page: int = 300):
+    def __init__(self, page_limit: int = 3, words_per_page: int = 300, protagonist_name: Optional[str] = None):
         self.page_limit = page_limit
         self.words_per_page = words_per_page
+        self.protagonist_name = protagonist_name
         self.total_words = page_limit * words_per_page
         self.checkpoint_1_words = int(self.total_words * 0.33)
         self.checkpoint_2_words = int(self.total_words * 0.66)
@@ -229,12 +230,22 @@ Writer: Please pause your writing.
         writer_prompt = f"""You are an SCP story writer creating a narrative-style SCP story.
 
 Story request: {user_request}
+{f"Protagonist name: {self.story_config.protagonist_name}" if self.story_config.protagonist_name else ""}
 
 Guidelines:
 - Write in narrative style like "There Is No Antimemetics Division" 
 - Create engaging, atmospheric storytelling
 - Target length: {self.story_config.page_limit} pages maximum (~{self.story_config.total_words} words)
 - You'll receive feedback at checkpoints during writing
+
+Character Creation:
+- Create UNIQUE character names for each story - avoid repetitive patterns
+- DO NOT default to "Dr. Chen", "Dr. Sarah Chen", or similar overused names
+- Draw from diverse cultural backgrounds and naming conventions
+- Vary character roles beyond just "Dr." or "Researcher" 
+- Examples for inspiration: Agent Kowalski, Professor Okafor, Specialist Rivera, 
+  Dr. Nakamura, Inspector Delacroix, Technician Petrova, Director Hassan
+- Consider using given names that reflect different cultures and backgrounds
 
 IMPORTANT - Story Writing Process:
 1. Write your story drafts IN THE DISCUSSION FILE using these markers:
@@ -277,6 +288,7 @@ Your role:
 - Ensure pacing, atmosphere, and narrative quality
 - Focus on whether the story will satisfy readers
 - Be supportive but honest about issues
+- Encourage character diversity - if you notice repetitive names like "Dr. Chen", suggest alternatives
 
 IMPORTANT - Approval Process:
 1. Writer will share story drafts in the discussion file with markers
