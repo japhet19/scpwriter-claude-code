@@ -1,0 +1,140 @@
+{
+  "active_project_id": "116b49cb-9f8f-4a70-b1b6-d74ca4574a00",
+  "sessions": {
+    "8d62c8c8-9310-4f23-82fa-728646466928": {
+      "agent_name": "SCP_WRITER",
+      "project_id": "ae065576-fcc2-44d8-ac91-0fd5a7e46199",
+      "created_at": "2025-07-23T19:58:50.143872",
+      "last_active": "2025-07-23T19:58:50.143874",
+      "message_count": 0,
+      "status": "inactive",
+      "ended_at": "2025-07-23T20:01:08.917041"
+    },
+    "ce834695-a0e6-4fc8-a69d-0bf8acce3f38": {
+      "agent_name": "READER",
+      "project_id": "ae065576-fcc2-44d8-ac91-0fd5a7e46199",
+      "created_at": "2025-07-23T19:58:50.144027",
+      "last_active": "2025-07-23T19:58:50.144029",
+      "message_count": 0,
+      "status": "inactive",
+      "ended_at": "2025-07-23T20:01:08.917243"
+    },
+    "f7501060-b03b-4197-a0f5-c06aa1e20555": {
+      "agent_name": "ORCHESTRATOR",
+      "project_id": "ae065576-fcc2-44d8-ac91-0fd5a7e46199",
+      "created_at": "2025-07-23T19:58:50.144120",
+      "last_active": "2025-07-23T19:58:50.144121",
+      "message_count": 0,
+      "status": "inactive",
+      "ended_at": "2025-07-23T20:01:08.917300"
+    },
+    "d3dbe4e8-98d5-4e65-ab39-cbad4483b1fe": {
+      "agent_name": "SCP_WRITER",
+      "project_id": "e9b47930-7c25-4f2e-8712-29ddafb0bf9a",
+      "created_at": "2025-07-23T20:01:35.988392",
+      "last_active": "2025-07-23T20:01:35.988395",
+      "message_count": 0,
+      "status": "inactive",
+      "ended_at": "2025-07-23T20:03:31.504547"
+    },
+    "f49228bb-1ae3-4697-bfea-1f6c502555d1": {
+      "agent_name": "READER",
+      "project_id": "e9b47930-7c25-4f2e-8712-29ddafb0bf9a",
+      "created_at": "2025-07-23T20:01:35.988567",
+      "last_active": "2025-07-23T20:01:35.988569",
+      "message_count": 0,
+      "status": "inactive",
+      "ended_at": "2025-07-23T20:03:31.504677"
+    },
+    "62fbdaf5-eb81-47c3-a018-5a5b187c1b72": {
+      "agent_name": "ORCHESTRATOR",
+      "project_id": "e9b47930-7c25-4f2e-8712-29ddafb0bf9a",
+      "created_at": "2025-07-23T20:01:35.988684",
+      "last_active": "2025-07-23T20:01:35.988686",
+      "message_count": 0,
+      "status": "inactive",
+      "ended_at": "2025-07-23T20:03:31.504756"
+    },
+    "dc60a1b1-a86d-47d3-bc8b-ea24ee820fc0": {
+      "agent_name": "ORCHESTRATOR",
+      "project_id": "fc0e8673-30ef-4001-a28a-aac7881ae4af",
+      "created_at": "2025-07-23T20:03:33.464032",
+      "last_active": "2025-07-23T20:03:33.464036",
+      "message_count": 0,
+      "status": "inactive",
+      "ended_at": "2025-07-23T20:34:19.793560"
+    },
+    "0d19dbc5-2ba3-4d1d-8ea3-ff5b699b00d2": {
+      "agent_name": "ORCHESTRATOR",
+      "project_id": "5170ab10-5247-4908-86e0-801fd3911781",
+      "created_at": "2025-07-23T20:34:21.773396",
+      "last_active": "2025-07-23T20:34:21.773399",
+      "message_count": 0,
+      "status": "inactive",
+      "ended_at": "2025-07-23T20:41:09.902917"
+    },
+    "d55f3875-b904-40a5-bb24-e019571c9164": {
+      "agent_name": "ORCHESTRATOR",
+      "project_id": "b0c03c93-2a58-4c31-9b92-44df5e83891a",
+      "created_at": "2025-07-23T20:41:11.781022",
+      "last_active": "2025-07-23T20:41:11.781026",
+      "message_count": 0,
+      "status": "inactive",
+      "ended_at": "2025-07-23T20:46:50.309136"
+    },
+    "b1904dec-0691-44f6-9c4a-ffd3fe03d775": {
+      "agent_name": "ORCHESTRATOR",
+      "project_id": "5b11e6a5-30ba-412f-9a6b-c98e9bfb9ab6",
+      "created_at": "2025-07-23T20:46:52.056949",
+      "last_active": "2025-07-23T20:47:39.242228",
+      "message_count": 1,
+      "status": "inactive",
+      "ended_at": "2025-07-23T20:48:17.529722"
+    },
+    "9a691619-3ff9-45dd-a3e1-9d2ab51f1a66": {
+      "agent_name": "ORCHESTRATOR",
+      "project_id": "a560df6f-00de-4c15-8a6a-1d32c18cacfc",
+      "created_at": "2025-07-23T20:48:19.242342",
+      "last_active": "2025-07-23T20:48:19.242346",
+      "message_count": 0,
+      "status": "inactive",
+      "ended_at": "2025-07-23T20:52:29.956148"
+    },
+    "971076e3-5027-4363-ae0a-598901b46ca1": {
+      "agent_name": "ORCHESTRATOR",
+      "project_id": "31f52370-c906-4179-96e4-1368846d0705",
+      "created_at": "2025-07-23T20:52:31.733987",
+      "last_active": "2025-07-23T20:52:31.733991",
+      "message_count": 0,
+      "status": "inactive",
+      "ended_at": "2025-07-23T20:59:42.244774"
+    },
+    "94ffd35b-1432-4790-af37-b066940eb33b": {
+      "agent_name": "ORCHESTRATOR",
+      "project_id": "32839bb8-2f9b-4da3-bdbb-90564fe36c46",
+      "created_at": "2025-07-23T20:59:44.034742",
+      "last_active": "2025-07-23T20:59:44.034746",
+      "message_count": 0,
+      "status": "inactive",
+      "ended_at": "2025-07-23T21:07:46.055970"
+    },
+    "412b7053-7a23-4a28-be72-a55113784e46": {
+      "agent_name": "ORCHESTRATOR",
+      "project_id": "7be8817d-1f84-4022-91bf-d3df897216c1",
+      "created_at": "2025-07-23T21:07:48.026122",
+      "last_active": "2025-07-23T21:07:48.026126",
+      "message_count": 0,
+      "status": "inactive",
+      "ended_at": "2025-07-23T21:20:18.972749"
+    },
+    "d90ee083-874b-47fe-8602-df76da50614d": {
+      "agent_name": "ORCHESTRATOR",
+      "project_id": "116b49cb-9f8f-4a70-b1b6-d74ca4574a00",
+      "created_at": "2025-07-23T21:20:21.038251",
+      "last_active": "2025-07-23T21:20:21.038255",
+      "message_count": 0,
+      "status": "active"
+    }
+  },
+  "last_updated": "2025-07-23T21:20:21.038285"
+}
