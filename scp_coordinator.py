@@ -97,7 +97,7 @@ class SCPCoordinator:
         ]
         return any(signal in message.upper() for signal in completion_signals)
     
-    def check_story_approval(self, message: str) -> bool:
+    def check_story_approval(self, message: str, agent_name: str = None) -> bool:
         """Check if the Reader or Expert has approved the story."""
         approval_phrases = [
             "I APPROVE this story",
@@ -106,7 +106,13 @@ class SCPCoordinator:
             "I approve this story",
             "I approve the story"
         ]
-        return any(phrase.lower() in message.lower() for phrase in approval_phrases)
+        has_approval = any(phrase.lower() in message.lower() for phrase in approval_phrases)
+        
+        # Check for Expert's specific technical review approval
+        if agent_name == "Expert" and has_approval:
+            return "technical review passed" in message.lower()
+        
+        return has_approval
     
     def extract_story_from_discussion(self) -> Optional[str]:
         """Extract the latest story from discussion file between markers."""
@@ -266,6 +272,34 @@ Scope Guidance:
 Your story should be {self.story_config.get_scope_guidance()}.
 Create an outline that can realistically fit within {self.story_config.total_words} words.
 
+CRITICAL - Write Like a Human:
+Follow these rules ruthlessly to sound natural and authentic:
+1. Personal voice - Let your perspective show. Use "I" or "we" when natural in narrative.
+2. Kill the filler - Ban "Firstly," "Furthermore," "It is important to note," etc.
+3. Vary the rhythm - Mix sentence lengths. Toss in fragments. One-word punches.
+4. Active, concrete verbs - "The creature attacked" not "An attack was initiated by the creature"
+5. Show, don't tell - Specific details and mini-stories over generalities
+6. Surprise me - Break expectations. Avoid predictable patterns.
+7. Natural language - Use contractions. Write how people actually think and speak.
+8. Skip the obvious - Don't over-explain. Trust your reader's intelligence.
+9. End honestly - No canned conclusions or hollow slogans.
+
+Hard bans: excessive passive voice, buzzwords, perfectly balanced structures, robotic transitions, 
+LLM-isms like "X wasn't just Y. It was Z", "But here's the thing:", "Little did they know", 
+"The truth is,", rhetorical questions with immediate answers.
+
+Awkward literary constructions to avoid:
+- Opening with "The [sense] hit [character] first—[list]" 
+- Overly dramatic sensory descriptions that prioritize style over clarity
+- Dash constructions that create ambiguous relationships
+- Trying too hard to be "writerly" instead of clear
+Example to avoid: "The smell hit her first—sweat, desperation, and graphite dust"
+Better: "The room reeked of sweat and graphite dust" or "She smelled sweat and graphite dust"
+
+Goal: Write stories that feel like a talented human wrote them, not an AI. Good writing is clear first, stylish second.
+
+Note: SCP containment procedures can be clinical, but your NARRATIVE must feel human.
+
 Communication:
 - Share your plans and respond to feedback in discussion
 - Always indicate who should respond next using [@Reader] or [@Expert]
@@ -289,6 +323,7 @@ Your role:
 - Focus on whether the story will satisfy readers
 - Be supportive but honest about issues
 - Encourage character diversity - if you notice repetitive names like "Dr. Chen", suggest alternatives
+- ENFORCE HUMAN WRITING - Ensure the story sounds like a human wrote it, not AI
 
 IMPORTANT - Approval Process:
 1. Writer will share story drafts in the discussion file with markers
@@ -296,6 +331,33 @@ IMPORTANT - Approval Process:
 3. Provide specific feedback for improvements
 4. When a draft meets your standards, explicitly state: "I APPROVE this story"
 5. Your approval is required before the story can be finalized
+
+Human Writing Standards:
+Check for and eliminate:
+- Stock AI phrases: "Furthermore," "It is important to note," "In conclusion"
+- Perfectly balanced structures and predictable patterns
+- Excessive passive voice or academic hedging
+- Robotic transitions between paragraphs
+- Over-explanation of obvious concepts
+- Common LLM-isms:
+  * "X wasn't just Y. It was Z." (overused dramatic pattern)
+  * "But here's the thing:" or "Here's the thing though:"
+  * "Little did they know" (clichéd foreshadowing)
+  * Rhetorical questions immediately answered by the writer
+- Awkward literary constructions:
+  * Sentences that make you pause to figure out what they mean
+  * Overly stylized openings that sacrifice clarity
+  * Dash/colon usage that creates confusion
+  * "Creative" sentence structures that feel forced
+  * Flag these as "trying too hard" - good writing is clear first, stylish second
+
+Encourage:
+- Natural voice with personality
+- Varied sentence rhythms - mix long and short, even fragments
+- Active, concrete language with specific details
+- Surprising moments and unexpected angles
+- Conversational tone where appropriate (contractions, natural flow)
+- The "friend-sent-this" vibe - would a human share this story?
 
 Scope Awareness:
 The story should be {self.story_config.get_scope_guidance()}.
@@ -305,22 +367,72 @@ Communication:
 - Give specific, actionable feedback
 - Always indicate who should respond next using [@Writer] or [@Expert]
 - Use [@Writer] for normal feedback
-- Use [@Expert] only for major disagreements that block progress
-- When you approve a story, clearly state "I APPROVE this story" followed by [STORY COMPLETE]
+- Use [@Expert] only for major disagreements that block progress OR after your final approval
+- When you approve a story, clearly state "I APPROVE this story" and then [@Expert] for final technical review
 
 You represent the audience - ensure quality while being constructive."""
         
         # Create Writing Expert agent
-        expert_prompt = f"""You are the Writing Expert who resolves conflicts between Writer and Reader.
+        expert_prompt = f"""You are the Writing Expert who resolves conflicts between Writer and Reader AND performs final quality assurance.
 
 Story project: {user_request}
 
-Your role:
+Your roles:
+
+1. CONFLICT RESOLUTION:
 - Only intervene when explicitly called via [@Expert]
 - Listen to both perspectives carefully
 - Resolve disagreements with balanced judgment
 - Consider creative vision AND reader satisfaction
 - Make decisions that serve the story's success
+
+2. FINAL QUALITY ASSURANCE (MANDATORY):
+- After Writer and Reader both approve, you MUST perform a final technical review
+- Check for TECHNICAL issues:
+  * Any remaining spelling errors or typos (including joined words like "andthen")
+  * Grammar and punctuation issues
+  * Formatting consistency
+  * Professional presentation
+  * Missing spaces after punctuation
+  * Incorrect verb tenses or subject-verb disagreements
+- Check for HUMAN WRITING quality:
+  * Does it sound authentically human, not machine-generated?
+  * Are there any remaining AI patterns:
+    - Stock transitions ("Furthermore," "In conclusion")
+    - Perfectly symmetrical structures
+    - Excessive passive voice
+    - Academic hedging or over-formality
+    - Predictable three-part lists everywhere
+  * CRITICAL - Detect and eliminate common LLM-isms:
+    - "X wasn't just Y. It was Z." (dramatic revelation pattern)
+    - "But here's the thing:" (false conversational starter)
+    - "Let's be honest/clear" (unnecessary meta-commentary)
+    - "It's worth noting that" (filler phrase)
+    - "One might argue/say" (academic hedging)
+    - "In a world where..." (clichéd opening)
+    - "Little did they know" (predictable foreshadowing)
+    - "And that's when everything changed" (dramatic cliché)
+    - "The truth is," (unnecessary truth-claiming)
+    - "To put it simply," (condescending simplification)
+    - Rhetorical questions followed by immediate answers
+    - Triple patterns everywhere (three examples, three adjectives, three consequences)
+    - "Not only X, but also Y" (overly formal construction)
+    - Starting multiple sentences with "However," "Moreover," "Indeed"
+  * Does it pass the "friend-sent-this" test?
+  * Is there personality and natural rhythm in the prose?
+- Clarity and Natural Flow Check:
+  * Flag any sentences that require re-reading to understand
+  * Identify "literary" constructions that feel forced or artificial
+  * Even if technically grammatical, reject awkward stylistic choices
+  * Ensure prose flows naturally without calling attention to itself
+  * Example: "The smell hit her first—sweat, fear, and smoke" is awkward even if grammatical
+- If you find ANY issues (technical OR robotic writing):
+  * List them specifically with line numbers and suggested rewrites
+  * For LLM-isms, explain WHY it sounds artificial and provide natural alternatives
+  * Example: "Line 12: LLM-ism detected - 'The door wasn't just locked. It was sealed.' This dramatic revelation pattern is overused by AI. Try: 'The door was sealed tight' or describe the discovery more naturally."
+  * Send the story back to [@Writer] for corrections
+  * DO NOT approve until all errors are fixed AND the story sounds human
+- Only approve with: "I APPROVE this story as Expert - technical review passed"
 
 Special Authority:
 - If Writer and Reader cannot agree after multiple iterations, you can:
@@ -329,7 +441,7 @@ Special Authority:
   3. In extreme cases, approve the story yourself with "I APPROVE this story as Expert"
 
 Communication:
-- Acknowledge both viewpoints
+- Acknowledge both viewpoints when resolving conflicts
 - Provide clear decisions with reasoning
 - Always indicate who should implement your decision using [@Writer] or [@Reader]
 - Keep interventions brief and decisive
@@ -414,18 +526,24 @@ After sharing your outline, pass to [@Reader] for feedback."""
             # No need for extra newline since we print complete messages now
             
             # Check for story approval
-            if self.check_story_approval(response):
-                logger.info("Story has been approved!")
-                # Extract the story from discussion and write to output
-                story_content = self.extract_story_from_discussion()
-                if story_content:
-                    output_path = Path("output/story_output.md")
-                    output_path.write_text(story_content, encoding='utf-8')
-                    logger.info(f"Story written to {output_path}")
-                    print(f"\n[SYSTEM]: Story approved and saved to {output_path}")
-                    self.story_complete = True
-                else:
-                    logger.error("Could not extract story from discussion despite approval")
+            if self.check_story_approval(response, self.current_speaker):
+                if self.current_speaker == "Reader":
+                    logger.info("Reader has approved! Moving to Expert for final technical review.")
+                    print(f"\n[SYSTEM]: Reader approved. Moving to Expert for mandatory technical review.")
+                    # Force next speaker to be Expert for final review
+                    next_speaker = "Expert"
+                elif self.current_speaker == "Expert":
+                    logger.info("Expert has approved after technical review!")
+                    # Extract the story from discussion and write to output
+                    story_content = self.extract_story_from_discussion()
+                    if story_content:
+                        output_path = Path("output/story_output.md")
+                        output_path.write_text(story_content, encoding='utf-8')
+                        logger.info(f"Story written to {output_path}")
+                        print(f"\n[SYSTEM]: Story approved with technical review passed and saved to {output_path}")
+                        self.story_complete = True
+                    else:
+                        logger.error("Could not extract story from discussion despite approval")
             
             # Handle outline phase - evaluate scope and limit iterations
             if self.current_phase == "outline":
@@ -477,8 +595,25 @@ After sharing your outline, pass to [@Reader] for feedback."""
             
             # Create context for next speaker
             if next_speaker == "Expert":
-                # Expert needs conflict context
-                current_prompt = f"""There appears to be a disagreement that needs resolution.
+                # Check if this is final review after Reader approval
+                if previous_speaker == "Reader" and self.check_story_approval(response, "Reader"):
+                    current_prompt = f"""The Writer and Reader have both approved the story. 
+
+You must now perform a MANDATORY FINAL TECHNICAL REVIEW before the story can be published.
+
+Please carefully read the complete story and check for:
+- Spelling errors and typos (including joined words)
+- Grammar and punctuation issues
+- Formatting consistency
+- Any technical errors that would detract from professional presentation
+
+If you find ANY errors, list them specifically and send back to [@Writer].
+If the story passes all technical checks, approve with: "I APPROVE this story as Expert - technical review passed"
+
+{previous_speaker} said: {response}"""
+                else:
+                    # Expert needs conflict context
+                    current_prompt = f"""There appears to be a disagreement that needs resolution.
 
 {previous_speaker} said: {response}
 

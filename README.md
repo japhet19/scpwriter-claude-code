@@ -19,15 +19,32 @@ SCP Writer uses a conversation coordinator pattern with three AI agents working 
 - Optional progress monitoring with `--monitor` flag
 - Automatic file cleanup on each run
 - Narrative style (like "There Is No Antimemetics Division")
+- **NEW**: Web interface with immersive SCP Foundation terminal theme
+- **NEW**: Real-time visualization of agent collaboration
+- **NEW**: WebSocket streaming for live story generation updates
 
 ## Installation
 
+### Backend (Python)
 ```bash
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
 # Install dependencies
 pip install -r requirements.txt
+pip install -r api/requirements.txt  # For web interface
+```
+
+### Frontend (Optional - for web interface)
+```bash
+cd frontend
+npm install
 ```
 
 ## Usage
+
+### Command Line Interface
 
 ```bash
 # Interactive mode (recommended) - prompts for all parameters
@@ -45,6 +62,22 @@ python main.py --monitor "Your theme here"
 # Combine options
 python main.py --pages 2 --monitor "A clock that runs backwards"
 ```
+
+### Web Interface
+
+1. Start the backend API:
+```bash
+source venv/bin/activate
+python api/main.py
+```
+
+2. In a new terminal, start the frontend:
+```bash
+cd frontend
+npm run dev
+```
+
+3. Open http://localhost:3000 in your browser
 
 ### Interactive Mode
 
@@ -65,6 +98,8 @@ Files are automatically cleared on each run for a fresh start.
 - `output/`: Generated stories
 - `scp_coordinator.py`: Conversation coordinator implementation
 - `main.py`: Entry point with interactive mode
+- `api/`: FastAPI backend for web interface
+- `frontend/`: Next.js web interface with terminal aesthetic
 
 ## How It Works
 
