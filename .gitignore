@@ -38,7 +38,10 @@ env/
 # Project specific
 discussions/story_discussion.md
 output/story_output.md
+output/story_final_*.md
 discussion.md
+story_discussion.md
+sessions.json
 *.log
 .env
 .claude/
@@ -50,6 +53,9 @@ htmlcov/
 .tox/
 .nox/
 .hypothesis/
+test_*.py
+*_test.py
+tests/
 
 # Jupyter Notebook
 .ipynb_checkpoints
