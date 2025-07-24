@@ -242,13 +242,14 @@ IMPORTANT - Story Writing Process:
    [Your story content here]
    ---END STORY---
 2. DO NOT write to output/story_output.md - that's only for approved final versions
-3. Reader will review your story and provide feedback
-4. When revising, ALWAYS include the complete revised story with markers:
+3. DO NOT create new files - just respond with your story content and markers
+4. Reader will review your story and provide feedback
+5. When revising, ALWAYS include the complete revised story with markers:
    ---BEGIN STORY---
    [Your complete revised story here]
    ---END STORY---
-5. Never just describe changes - always provide the full revised text
-6. Only after Reader explicitly approves will the story be finalized
+6. Never just describe changes - always provide the full revised text
+7. Only after Reader explicitly approves will the story be finalized
 
 Scope Guidance:
 Your story should be {self.story_config.get_scope_guidance()}.

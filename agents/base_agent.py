@@ -122,7 +122,7 @@ Remember to check both the discussion file and (if relevant) the output file.
                 resume=self.session_id,
                 append_system_prompt=self.system_prompt,
                 cwd=Path(".").absolute(),
-                allowed_tools=["Read", "Write", "Edit"],  # Agents can read/write files
+                allowed_tools=["Read", "Edit"],  # Agents can read/write files
                 max_turns=20,  # Allow multiple turns for complex edits
                 model=use_model if use_model else None  # Optional model
             )
@@ -131,7 +131,7 @@ Remember to check both the discussion file and (if relevant) the output file.
             options = ClaudeCodeOptions(
                 append_system_prompt=self.system_prompt,
                 cwd=Path(".").absolute(),
-                allowed_tools=["Read", "Write", "Edit"],  # Agents can read/write files
+                allowed_tools=["Read", "Edit"],  # Agents can read/write files
                 max_turns=20,  # Allow multiple turns for complex edits
                 model=use_model if use_model else None  # Optional model
             )
@@ -259,7 +259,7 @@ Remember to check both the discussion file and (if relevant) the output file.
             continue_conversation=True,
             append_system_prompt=self.system_prompt,
             cwd=Path(".").absolute(),
-            allowed_tools=["Read", "Write", "Edit"],
+            allowed_tools=["Read", "Edit"],
             max_turns=1
         )
         
