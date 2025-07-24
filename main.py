@@ -159,12 +159,6 @@ def main():
     )
     
     parser.add_argument(
-        "--clean",
-        action="store_true",
-        help="Clean output directories before starting"
-    )
-    
-    parser.add_argument(
         "--monitor",
         action="store_true",
         help="Show progress monitoring during story creation"
@@ -175,29 +169,35 @@ def main():
     # Print header
     print_header()
     
-    # Clean directories if requested
-    if args.clean:
-        print("Cleaning output files...")
-        discussion_path = Path("discussions/story_discussion.md")
-        output_path = Path("output/story_output.md")
-        
-        # Ensure directories exist
-        discussion_path.parent.mkdir(exist_ok=True)
-        output_path.parent.mkdir(exist_ok=True)
-        
-        # Clear files instead of deleting them
-        discussion_path.write_text("", encoding='utf-8')
-        output_path.write_text("", encoding='utf-8')
-            
-        print("✓ Files cleared")
-        print(f"  - Discussion: {discussion_path}")
-        print(f"  - Output: {output_path}\n")
+    # Always clean files for fresh start
+    print("Preparing fresh workspace...")
+    discussion_path = Path("discussions/story_discussion.md")
+    output_path = Path("output/story_output.md")
     
-    # Get theme from args or prompt
+    # Ensure directories exist
+    discussion_path.parent.mkdir(exist_ok=True)
+    output_path.parent.mkdir(exist_ok=True)
+    
+    # Clear files
+    discussion_path.write_text("", encoding='utf-8')
+    output_path.write_text("", encoding='utf-8')
+        
+    print("✓ Files cleared")
+    print(f"  - Discussion: {discussion_path}")
+    print(f"  - Output: {output_path}\n")
+    
+    # Get parameters from args or interactive mode
     if args.theme:
         theme = args.theme
+        page_limit = args.pages
+        show_monitor = args.monitor
     else:
-        print("Enter the theme or concept for your SCP story.")
+        # Interactive mode - collect all parameters
+        print("Welcome to SCP Writer interactive mode!")
+        print("\nI'll help you create an SCP story. Let me ask you a few questions.\n")
+        
+        # Get theme
+        print("What's the theme or concept for your SCP story?")
         print("Examples:")
         print("  - 'A library where books rewrite themselves based on who reads them'")
         print("  - 'A coffee shop where time moves differently for each customer'")
@@ -208,10 +208,37 @@ def main():
         if not theme:
             print("❌ Error: Theme cannot be empty")
             sys.exit(1)
+            
+        # Get page limit
+        print(f"\nHow many pages should the story be? (default: 3)")
+        page_input = input("Pages [1-10]: ").strip()
+        if page_input and page_input.isdigit():
+            page_limit = min(max(int(page_input), 1), 10)  # Clamp between 1-10
+        else:
+            page_limit = 3
+            
+        # Get monitor preference
+        print(f"\nWould you like to see progress monitoring during creation?")
+        monitor_input = input("Enable monitoring? (y/N): ").strip().lower()
+        show_monitor = monitor_input in ['y', 'yes']
+        
+        # Show summary
+        print("\n" + "="*60)
+        print("STORY CONFIGURATION")
+        print("="*60)
+        print(f"Theme: {theme}")
+        print(f"Target length: {page_limit} pages (~{page_limit * 300} words)")
+        print(f"Progress monitoring: {'Enabled' if show_monitor else 'Disabled'}")
+        print("="*60)
+        
+        # Confirm
+        if input("\nProceed with story creation? (Y/n): ").strip().lower() in ['n', 'no']:
+            print("Story creation cancelled.")
+            sys.exit(0)
     
     # Run the async story creation
     try:
-        asyncio.run(create_story(theme, page_limit=args.pages, show_monitor=args.monitor))
+        asyncio.run(create_story(theme, page_limit=page_limit, show_monitor=show_monitor))
     except Exception as e:
         logger.error(f"Fatal error: {e}")
         print(f"\n❌ Fatal error: {e}")
