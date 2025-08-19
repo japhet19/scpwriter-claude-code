@@ -66,6 +66,12 @@ test_*.py
 *_test.py
 tests/
 
+# Debug and temporary files
+debug_*.html
+test_*.html
+*_debug.*
+minimal_*.py
+
 # Jupyter Notebook
 .ipynb_checkpoints
 
