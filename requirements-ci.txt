@@ -1,0 +1,6 @@
+# CI-specific requirements (excluding claude-code-sdk)
+# This file is used for GitHub Actions CI to avoid authentication issues
+watchdog>=4.0.0
+python-dateutil>=2.8.2
+pyyaml>=6.0.1
+typing-extensions>=4.9.0

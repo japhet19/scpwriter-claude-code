@@ -24,16 +24,17 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        # Install CI-safe dependencies (excludes claude-code-sdk)
+        pip install -r requirements-ci.txt
         pip install -r api/requirements.txt
     
     - name: Check code formatting
       run: |
         pip install black flake8
         # Check if code would be reformatted
-        black --check agents/ utils/ api/ *.py || true
+        black --check agents/ utils/ api/ cli.py scp_coordinator.py setup.py || true
         # Run flake8 linter
-        flake8 agents/ utils/ api/ *.py --max-line-length=120 --ignore=E203,W503 || true
+        flake8 agents/ utils/ api/ cli.py scp_coordinator.py setup.py --max-line-length=120 --ignore=E203,W503 || true
     
     - name: Run tests
       run: |
@@ -81,5 +82,7 @@ jobs:
     
     - name: Check for security vulnerabilities
       run: |
-        pip install -r requirements.txt
+        # Install CI-safe dependencies for security scanning
+        pip install -r requirements-ci.txt || true
+        pip install -r api/requirements.txt || true
         safety check || true

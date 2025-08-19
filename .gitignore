@@ -72,6 +72,9 @@ test_*.html
 *_debug.*
 minimal_*.py
 
+# CI-specific files (keep these)
+!requirements-ci.txt
+
 # Jupyter Notebook
 .ipynb_checkpoints
 
