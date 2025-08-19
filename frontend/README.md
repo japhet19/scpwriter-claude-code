@@ -40,7 +40,7 @@ The frontend requires the FastAPI backend to be running on port 8000:
 ```bash
 cd ../api
 source ../venv/bin/activate
-python main.py
+python server.py
 ```
 
 ## Project Structure

@@ -62,17 +62,32 @@ export default function StoryConfig({ onSubmit }: StoryConfigProps) {
   return (
     <form onSubmit={handleSubmit} className={styles.configForm}>
       <div className={styles.formHeader}>
-        <h2>┌─── ANOMALY GENERATION PARAMETERS ───────────────────┐</h2>
+        <h2 className="glitch-hover">┌─── ANOMALY GENERATION PARAMETERS ───────────────────┐</h2>
       </div>
       
       <div className={styles.formContent}>
+        <div className={styles.infoSection}>
+          <p className={styles.infoText}>
+            <span className={styles.infoIcon}>ℹ</span>
+            SCP stories are fictional scientific reports about paranormal objects and entities, 
+            written in a clinical documentary style. 
+            <a 
+              href="https://en.wikipedia.org/wiki/SCP_Foundation" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className={styles.infoLink}
+            >
+              Learn more about the SCP format →
+            </a>
+          </p>
+        </div>
         <div className={styles.statusRow}>
-          <span>DESIGNATION: SCP-[PENDING]</span>
-          <span>CLASSIFICATION: [PENDING]</span>
+          <span className="glitch-hover">DESIGNATION: SCP-[PENDING]</span>
+          <span className="glitch-hover">CLASSIFICATION: [PENDING]</span>
         </div>
 
         <div className={styles.formGroup}>
-          <label className={styles.label}>▼ ANOMALY DESCRIPTION</label>
+          <label className={`${styles.label} glitch-hover`}>▼ ANOMALY DESCRIPTION</label>
           <textarea
             className="terminal-input"
             value={theme}
@@ -97,7 +112,7 @@ export default function StoryConfig({ onSubmit }: StoryConfigProps) {
         </div>
 
         <div className={styles.formGroup}>
-          <label className={styles.label}>▼ NARRATIVE PARAMETERS</label>
+          <label className={`${styles.label} glitch-hover`}>▼ NARRATIVE PARAMETERS</label>
           <div className={styles.paramRow}>
             <span>Document Length:</span>
             <div className={styles.pageOptions}>
@@ -141,7 +156,7 @@ export default function StoryConfig({ onSubmit }: StoryConfigProps) {
         </div>
 
         <div className={styles.formGroup}>
-          <label className={styles.label}>▼ ADVANCED OPTIONS</label>
+          <label className={`${styles.label} glitch-hover`}>▼ ADVANCED OPTIONS</label>
           <div className={styles.paramRow}>
             <span>Horror Level:</span>
             <div className={styles.sliderContainer}>
@@ -198,7 +213,7 @@ export default function StoryConfig({ onSubmit }: StoryConfigProps) {
       </div>
       
       <div className={styles.formFooter}>
-        <h2>└──────────────────────────────────────────────────────┘</h2>
+        <h2 className="glitch-hover">└──────────────────────────────────────────────────────┘</h2>
       </div>
     </form>
   )

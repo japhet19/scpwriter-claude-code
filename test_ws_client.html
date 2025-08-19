@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Test</title>
+</head>
+<body>
+    <h1>WebSocket Test</h1>
+    <div id="status">Not connected</div>
+    <div id="messages"></div>
+    
+    <script>
+        const status = document.getElementById('status');
+        const messages = document.getElementById('messages');
+        
+        function log(msg) {
+            console.log(msg);
+            messages.innerHTML += `<div>${new Date().toISOString()}: ${msg}</div>`;
+        }
+        
+        // Test the actual server
+        log('Testing actual server at ws://localhost:8000/ws/generate');
+        const ws1 = new WebSocket('ws://localhost:8000/ws/generate');
+        
+        ws1.onopen = () => {
+            log('Connected to actual server!');
+            status.textContent = 'Connected to actual server';
+        };
+        
+        ws1.onerror = (e) => {
+            log(`Error on actual server: ${e}`);
+            console.error('Actual server error:', e);
+        };
+        
+        ws1.onclose = (e) => {
+            log(`Actual server closed: code=${e.code}, reason=${e.reason}`);
+        };
+        
+        ws1.onmessage = (e) => {
+            log(`Actual server message: ${e.data}`);
+        };
+        
+        // Also test minimal server if running
+        setTimeout(() => {
+            log('Testing minimal server at ws://localhost:8001/ws');
+            const ws2 = new WebSocket('ws://localhost:8001/ws');
+            
+            ws2.onopen = () => {
+                log('Connected to test server!');
+                ws2.send('Hello from client');
+            };
+            
+            ws2.onerror = (e) => {
+                log(`Test server error: ${e}`);
+            };
+            
+            ws2.onclose = (e) => {
+                log(`Test server closed: code=${e.code}, reason=${e.reason}`);
+            };
+            
+            ws2.onmessage = (e) => {
+                log(`Test server message: ${e.data}`);
+            };
+        }, 1000);
+    </script>
+</body>
+</html>

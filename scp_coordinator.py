@@ -29,6 +29,7 @@ class StoryConfig:
         self.words_per_page = words_per_page
         self.protagonist_name = protagonist_name
         self.total_words = page_limit * words_per_page
+        self.min_words = int(self.total_words * 0.9)  # Allow 10% under target
         self.checkpoint_1_words = int(self.total_words * 0.33)
         self.checkpoint_2_words = int(self.total_words * 0.66)
         
@@ -114,6 +115,23 @@ class SCPCoordinator:
         
         return has_approval
     
+    def check_word_count_compliance(self, text: str) -> Tuple[bool, str]:
+        """Check if story meets word count requirements."""
+        word_count = len(text.split())
+        target = self.story_config.total_words
+        min_words = self.story_config.min_words
+        max_words = int(target * 1.1)  # Allow 10% over
+        
+        if word_count < min_words:
+            percent_complete = (word_count / target) * 100
+            return False, f"Story is {word_count} words ({percent_complete:.0f}% of target). Needs at least {min_words} words ({target} target)."
+        elif word_count > max_words:
+            percent_over = ((word_count - target) / target) * 100
+            return False, f"Story is {word_count} words ({percent_over:.0f}% over target). Maximum allowed is {max_words} words ({target} target)."
+        else:
+            percent_of_target = (word_count / target) * 100
+            return True, f"Story is {word_count} words ({percent_of_target:.0f}% of {target} target)"
+    
     def extract_story_from_discussion(self) -> Optional[str]:
         """Extract the latest story from discussion file between markers."""
         discussion_path = Path("discussions/story_discussion.md")
@@ -185,13 +203,14 @@ class SCPCoordinator:
             self.checkpoint_manager.mark_checkpoint_complete("page_1_checkpoint")
             self.current_phase = "checkpoint_1"
             
-            return f"""[CHECKPOINT] You've reached approximately {pages_done:.1f} pages ({word_count} words).
+            return f"""[CHECKPOINT] You've reached {word_count} words ({pages_done:.1f} pages).
+Target: {self.story_config.total_words} words total ({word_count}/{self.story_config.total_words} = {(word_count/self.story_config.total_words)*100:.0f}%)
             
 Writer: Please pause your writing.
 [@Reader]: Please review the story so far and provide feedback on:
 - Engagement and atmosphere
 - Pacing and flow
-- Any concerns or suggestions for the remaining {self.story_config.page_limit - pages_done:.1f} pages"""
+- Any concerns or suggestions for the remaining {self.story_config.total_words - word_count} words ({self.story_config.page_limit - pages_done:.1f} pages)"""
         
         # Check for second checkpoint (2/3 of story)
         if (word_count >= self.story_config.checkpoint_2_words - 50 and 
@@ -203,7 +222,9 @@ Writer: Please pause your writing.
             self.checkpoint_manager.mark_checkpoint_complete("page_2_checkpoint")
             self.current_phase = "checkpoint_2"
             
-            return f"""[CRITICAL CHECKPOINT] You've reached approximately {pages_done:.1f} pages ({word_count} words).
+            return f"""[CRITICAL CHECKPOINT] You've reached {word_count} words ({pages_done:.1f} pages).
+Target: {self.story_config.total_words} words total ({word_count}/{self.story_config.total_words} = {(word_count/self.story_config.total_words)*100:.0f}%)
+Remaining: {remaining_words} words to reach target
             
 Writer: Please pause your writing. 
 [@Reader]: This is critical - please evaluate:
@@ -241,8 +262,10 @@ Story request: {user_request}
 Guidelines:
 - Write in narrative style like "There Is No Antimemetics Division" 
 - Create engaging, atmospheric storytelling
-- Target length: {self.story_config.page_limit} pages maximum (~{self.story_config.total_words} words)
+- CRITICAL: Target length is EXACTLY {self.story_config.total_words} words ({self.story_config.page_limit} pages)
+- Your story MUST be between {self.story_config.min_words} and {int(self.story_config.total_words * 1.1)} words
 - You'll receive feedback at checkpoints during writing
+- DO NOT submit a story under {self.story_config.min_words} words - it will be rejected
 
 Character Creation:
 - Create UNIQUE character names for each story - avoid repetitive patterns
@@ -329,8 +352,12 @@ IMPORTANT - Approval Process:
 1. Writer will share story drafts in the discussion file with markers
 2. Review each draft thoroughly
 3. Provide specific feedback for improvements
-4. When a draft meets your standards, explicitly state: "I APPROVE this story"
-5. Your approval is required before the story can be finalized
+4. CRITICAL - Word Count Check: Before approving, verify the story is {self.story_config.total_words} words (±10%)
+   - Minimum acceptable: {self.story_config.min_words} words
+   - Maximum acceptable: {int(self.story_config.total_words * 1.1)} words
+   - DO NOT APPROVE if the story is significantly under or over the target word count
+5. When a draft meets your standards AND word count, explicitly state: "I APPROVE this story"
+6. Your approval is required before the story can be finalized
 
 Human Writing Standards:
 Check for and eliminate:
@@ -389,6 +416,9 @@ Your roles:
 2. FINAL QUALITY ASSURANCE (MANDATORY):
 - After Writer and Reader both approve, you MUST perform a final technical review
 - Check for TECHNICAL issues:
+  * Verify word count: Story must be {self.story_config.total_words} words (±10%)
+    - Minimum: {self.story_config.min_words} words
+    - Maximum: {int(self.story_config.total_words * 1.1)} words
   * Any remaining spelling errors or typos (including joined words like "andthen")
   * Grammar and punctuation issues
   * Formatting consistency
@@ -527,6 +557,29 @@ After sharing your outline, pass to [@Reader] for feedback."""
             
             # Check for story approval
             if self.check_story_approval(response, self.current_speaker):
+                # First, check if we have a story and if it meets word count
+                story_content = self.extract_story_from_discussion()
+                if story_content:
+                    word_count_ok, word_count_msg = self.check_word_count_compliance(story_content)
+                    
+                    if not word_count_ok:
+                        # Override approval - inject word count error
+                        logger.warning(f"{self.current_speaker} tried to approve but: {word_count_msg}")
+                        print(f"\n[SYSTEM ERROR]: Cannot approve - {word_count_msg}")
+                        print(f"[SYSTEM]: {self.current_speaker}, please ensure the story meets the word count requirement before approving.")
+                        
+                        # Send back to Writer for revision
+                        if self.current_speaker == "Reader":
+                            current_prompt = f"The story does not meet word count requirements. {word_count_msg} Please revise to meet the target."
+                            next_speaker = "Writer"
+                        elif self.current_speaker == "Expert":
+                            current_prompt = f"Technical review failed: {word_count_msg} Please revise."
+                            next_speaker = "Writer"
+                        continue  # Skip the rest of approval processing
+                    else:
+                        logger.info(f"Word count check passed: {word_count_msg}")
+                
+                # Process approval if word count is OK
                 if self.current_speaker == "Reader":
                     logger.info("Reader has approved! Moving to Expert for final technical review.")
                     print(f"\n[SYSTEM]: Reader approved. Moving to Expert for mandatory technical review.")
@@ -542,6 +595,11 @@ After sharing your outline, pass to [@Reader] for feedback."""
                         logger.info(f"Story written to {output_path}")
                         print(f"\n[SYSTEM]: Story approved with technical review passed and saved to {output_path}")
                         self.story_complete = True
+                        
+                        # Save conversation log after successful completion
+                        log_path = self.save_conversation_log()
+                        if log_path:
+                            print(f"[SYSTEM]: Full conversation log saved to {log_path}")
                     else:
                         logger.error("Could not extract story from discussion despite approval")
             
@@ -624,6 +682,10 @@ Please review the discussion and make a balanced decision to move the project fo
         
         logger.info(f"\nStory creation ended after {self.turn_count} turns")
         self.print_summary()
+        
+        # Inform about log availability if story was completed
+        if self.story_complete:
+            print("\n💡 Tip: The full conversation log has been saved to the logs/ directory.")
     
     def print_summary(self):
         """Print conversation summary."""
@@ -682,6 +744,86 @@ Please review the discussion and make a balanced decision to move the project fo
                 print("\nNo story file generated")
         
         print("\n" + "="*60)
+    
+    def save_conversation_log(self) -> Optional[str]:
+        """Save the full conversation log to a file. Returns the filepath if successful."""
+        if not self.conversation_history:
+            logger.warning("No conversation history to save")
+            return None
+            
+        # Generate timestamp for filename
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        log_filename = f"conversation_log_{timestamp}.md"
+        log_path = Path("logs") / log_filename
+        
+        # Ensure logs directory exists
+        log_path.parent.mkdir(exist_ok=True)
+        
+        try:
+            # Build the log content
+            log_content = f"""# SCP Story Creation Log
+
+Generated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+Story Theme: {self.user_request}
+Total Duration: {sum(turn["time"] for turn in self.conversation_history):.1f} seconds ({sum(turn["time"] for turn in self.conversation_history)/60:.1f} minutes)
+Total Turns: {len(self.conversation_history)}
+
+## Configuration
+- Target Length: {self.story_config.total_words} words ({self.story_config.page_limit} pages)
+- Min Words: {self.story_config.min_words}
+- Max Words: {int(self.story_config.total_words * 1.1)}
+- Words per Page: {self.story_config.words_per_page}
+
+## Conversation Timeline
+
+"""
+            # Add each turn
+            for turn in self.conversation_history:
+                turn_num = turn["turn"]
+                speaker = turn["speaker"]
+                phase = turn["phase"]
+                elapsed = turn["time"]
+                response = turn["response"]
+                
+                log_content += f"### Turn {turn_num} - {speaker} ({phase} phase) - {elapsed:.1f}s\n\n"
+                log_content += f"{response}\n\n"
+                log_content += "-" * 80 + "\n\n"
+            
+            # Add summary statistics
+            speaker_stats = {}
+            for turn in self.conversation_history:
+                speaker = turn["speaker"]
+                if speaker not in speaker_stats:
+                    speaker_stats[speaker] = {"count": 0, "total_time": 0}
+                speaker_stats[speaker]["count"] += 1
+                speaker_stats[speaker]["total_time"] += turn["time"]
+            
+            log_content += "## Summary Statistics\n\n"
+            for speaker, stats in speaker_stats.items():
+                avg_time = stats["total_time"] / stats["count"]
+                log_content += f"- {speaker}: {stats['count']} turns, avg {avg_time:.1f} seconds\n"
+            
+            # Add final story location and word count
+            story_path = Path("output/story_output.md")
+            if story_path.exists():
+                content = story_path.read_text(encoding='utf-8', errors='replace')
+                word_count = len(content.split())
+                log_content += f"\n## Final Story\n"
+                log_content += f"- Location: {story_path}\n"
+                log_content += f"- Word Count: {word_count} words ({word_count/self.story_config.words_per_page:.1f} pages)\n"
+                log_content += f"- Status: Successfully completed ✓\n"
+            else:
+                log_content += f"\n## Final Story\n"
+                log_content += f"- Status: Not completed\n"
+            
+            # Write the log file
+            log_path.write_text(log_content, encoding='utf-8')
+            logger.info(f"Conversation log saved to: {log_path}")
+            return str(log_path)
+            
+        except Exception as e:
+            logger.error(f"Failed to save conversation log: {e}")
+            return None
 
 
 async def main():

@@ -35,7 +35,8 @@ export default function Terminal({ children, title = 'SCP FOUNDATION TERMINAL', 
   }, [])
 
   return (
-    <div className={`crt-container ${isFlickering ? 'crt-flicker' : ''}`}>
+    <div className={`crt-container ${isFlickering ? 'crt-flicker' : ''} crt-distortion`}>
+      <div className="crt-burnin" />
       <div className="terminal-window">
         {showHeader && (
           <div className="terminal-header">

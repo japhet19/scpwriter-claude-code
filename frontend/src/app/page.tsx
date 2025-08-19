@@ -85,12 +85,128 @@ export default function Home() {
       
       {currentView === 'generation' && (
         <div className="generation-view">
+          <div className="matrix-rain">
+            <div className="matrix-column matrix-column-1">
+              <span className="matrix-char">0</span>
+              <span className="matrix-char">1</span>
+              <span className="matrix-char">0</span>
+              <span className="matrix-char">1</span>
+              <span className="matrix-char">1</span>
+              <span className="matrix-char">0</span>
+              <span className="matrix-char">0</span>
+              <span className="matrix-char">1</span>
+            </div>
+            <div className="matrix-column matrix-column-2">
+              <span className="matrix-char">█</span>
+              <span className="matrix-char">▓</span>
+              <span className="matrix-char">▒</span>
+              <span className="matrix-char">░</span>
+              <span className="matrix-char">█</span>
+              <span className="matrix-char">▓</span>
+              <span className="matrix-char">▒</span>
+            </div>
+            <div className="matrix-column matrix-column-3">
+              <span className="matrix-char">S</span>
+              <span className="matrix-char">C</span>
+              <span className="matrix-char">P</span>
+              <span className="matrix-char">-</span>
+              <span className="matrix-char">X</span>
+              <span className="matrix-char">X</span>
+              <span className="matrix-char">X</span>
+            </div>
+            <div className="matrix-column matrix-column-4">
+              <span className="matrix-char">1</span>
+              <span className="matrix-char">0</span>
+              <span className="matrix-char">1</span>
+              <span className="matrix-char">1</span>
+              <span className="matrix-char">0</span>
+              <span className="matrix-char">0</span>
+              <span className="matrix-char">1</span>
+            </div>
+            <div className="matrix-column matrix-column-5">
+              <span className="matrix-char">▲</span>
+              <span className="matrix-char">▼</span>
+              <span className="matrix-char">◆</span>
+              <span className="matrix-char">◇</span>
+              <span className="matrix-char">●</span>
+              <span className="matrix-char">○</span>
+            </div>
+            <div className="matrix-column matrix-column-6">
+              <span className="matrix-char">0</span>
+              <span className="matrix-char">1</span>
+              <span className="matrix-char">0</span>
+              <span className="matrix-char">0</span>
+              <span className="matrix-char">1</span>
+              <span className="matrix-char">1</span>
+              <span className="matrix-char">0</span>
+            </div>
+            <div className="matrix-column matrix-column-7">
+              <span className="matrix-char">█</span>
+              <span className="matrix-char">▓</span>
+              <span className="matrix-char">▒</span>
+              <span className="matrix-char">░</span>
+              <span className="matrix-char">█</span>
+            </div>
+            <div className="matrix-column matrix-column-8">
+              <span className="matrix-char">K</span>
+              <span className="matrix-char">E</span>
+              <span className="matrix-char">T</span>
+              <span className="matrix-char">E</span>
+              <span className="matrix-char">R</span>
+            </div>
+            <div className="matrix-column matrix-column-9">
+              <span className="matrix-char">1</span>
+              <span className="matrix-char">0</span>
+              <span className="matrix-char">1</span>
+              <span className="matrix-char">0</span>
+              <span className="matrix-char">1</span>
+              <span className="matrix-char">1</span>
+            </div>
+            <div className="matrix-column matrix-column-10">
+              <span className="matrix-char">▲</span>
+              <span className="matrix-char">▼</span>
+              <span className="matrix-char">◆</span>
+              <span className="matrix-char">◇</span>
+            </div>
+            <div className="matrix-column matrix-column-11">
+              <span className="matrix-char">0</span>
+              <span className="matrix-char">1</span>
+              <span className="matrix-char">1</span>
+              <span className="matrix-char">0</span>
+              <span className="matrix-char">0</span>
+            </div>
+            <div className="matrix-column matrix-column-12">
+              <span className="matrix-char">█</span>
+              <span className="matrix-char">▓</span>
+              <span className="matrix-char">▒</span>
+              <span className="matrix-char">░</span>
+            </div>
+            <div className="matrix-column matrix-column-13">
+              <span className="matrix-char">E</span>
+              <span className="matrix-char">U</span>
+              <span className="matrix-char">C</span>
+              <span className="matrix-char">L</span>
+              <span className="matrix-char">I</span>
+              <span className="matrix-char">D</span>
+            </div>
+          </div>
+          <div className="data-stream">
+            <div className="data-flow data-flow-1">ANOMALY DETECTED... CLASSIFICATION PENDING... CONTAINMENT PROTOCOLS INITIALIZING...</div>
+            <div className="data-flow data-flow-2">SECURE CONTAIN PROTECT... AGENT NETWORK ACTIVE... PROCESSING DATA STREAMS...</div>
+            <div className="data-flow data-flow-3">FOUNDATION DATABASE ACCESS... CROSS-REFERENCING ANOMALOUS PROPERTIES...</div>
+            <div className="data-flow data-flow-4">NARRATIVE SYNTHESIS IN PROGRESS... DEPLOYING CREATIVE ALGORITHMS...</div>
+          </div>
           <h2>GENERATING ANOMALY DOCUMENTATION...</h2>
           
           <div className="agent-status">
             <h3>┌─── AGENT STATUS MONITOR ──────────────────────────────┐</h3>
             <div className="agents-grid">
               <div className={`agent-box ${agentStates.Writer}`}>
+                <div className="particle-system">
+                  <div className="particle particle-1"></div>
+                  <div className="particle particle-2"></div>
+                  <div className="particle particle-3"></div>
+                </div>
                 <div className="agent-container">
                   <div className="agent-icon">
                     ╭─────╮
@@ -106,6 +222,11 @@ export default function Home() {
                 </div>
               </div>
               <div className={`agent-box ${agentStates.Reader}`}>
+                <div className="particle-system">
+                  <div className="particle particle-1"></div>
+                  <div className="particle particle-2"></div>
+                  <div className="particle particle-3"></div>
+                </div>
                 <div className="agent-container">
                   <div className="agent-icon">
                     ╭─────╮
@@ -121,6 +242,11 @@ export default function Home() {
                 </div>
               </div>
               <div className={`agent-box ${agentStates.Expert}`}>
+                <div className="particle-system">
+                  <div className="particle particle-1"></div>
+                  <div className="particle particle-2"></div>
+                  <div className="particle particle-3"></div>
+                </div>
                 <div className="agent-container">
                   <div className="agent-icon">
                     ╭─────╮

@@ -46,6 +46,15 @@ sessions.json
 .env
 .claude/
 
+# Frontend build
+frontend/.next/
+frontend/out/
+frontend/.turbo/
+
+# Archive and old files
+archive/
+main_old.py
+
 # Testing
 .pytest_cache/
 .coverage

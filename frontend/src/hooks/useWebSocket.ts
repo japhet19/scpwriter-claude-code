@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
-import { io, Socket } from 'socket.io-client'
 
 export interface AgentMessage {
-  type: 'status' | 'agent_message' | 'completed' | 'error' | 'agent_update'
+  type: 'status' | 'agent_message' | 'completed' | 'error' | 'agent_update' | 'ping'
   agent?: string
   message: string
   turn?: number
@@ -24,7 +23,7 @@ export interface AgentStates {
   Expert: 'thinking' | 'writing' | 'waiting'
 }
 
-export function useWebSocket(url: string = 'http://localhost:8000') {
+export function useWebSocket(url: string = 'http://127.0.0.1:8000') {
   const [isConnected, setIsConnected] = useState(false)
   const [messages, setMessages] = useState<AgentMessage[]>([])
   const [isGenerating, setIsGenerating] = useState(false)
@@ -41,7 +40,8 @@ export function useWebSocket(url: string = 'http://localhost:8000') {
   const connect = useCallback(() => {
     if (socketRef.current?.readyState === WebSocket.OPEN) return
 
-    const ws = new WebSocket(`${url.replace('http', 'ws')}/ws/generate`)
+    const wsUrl = url.replace(/^http/, 'ws').replace(/^https/, 'wss')
+    const ws = new WebSocket(`${wsUrl}/ws/generate`)
     
     ws.onopen = () => {
       console.log('WebSocket connected')
@@ -50,6 +50,9 @@ export function useWebSocket(url: string = 'http://localhost:8000') {
 
     ws.onmessage = (event) => {
       const data: AgentMessage = JSON.parse(event.data)
+      
+      // Ignore ping messages (keep-alive for Safari)
+      if (data.type === 'ping') return
       
       setMessages(prev => [...prev, data])
       

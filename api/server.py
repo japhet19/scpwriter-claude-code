@@ -50,9 +50,22 @@ async def root():
 
 @app.websocket("/ws/generate")
 async def websocket_generate(websocket: WebSocket):
+    # Accept without subprotocol for Safari compatibility
     await websocket.accept()
     connection_id = id(websocket)
     active_connections[str(connection_id)] = websocket
+    
+    # Add keep-alive ping task for Safari
+    async def send_ping():
+        try:
+            while True:
+                await asyncio.sleep(20)  # Ping every 20 seconds
+                if str(connection_id) in active_connections:
+                    await websocket.send_json({"type": "ping"})
+        except:
+            pass
+    
+    ping_task = asyncio.create_task(send_ping())
     
     try:
         while True:
@@ -226,6 +239,11 @@ async def websocket_generate(websocket: WebSocket):
         print(f"WebSocket error: {e}")
         if str(connection_id) in active_connections:
             del active_connections[str(connection_id)]
+    finally:
+        # Clean up ping task
+        ping_task.cancel()
+        if str(connection_id) in active_connections:
+            del active_connections[str(connection_id)]
 
 @app.get("/health")
 async def health_check():
@@ -236,4 +254,4 @@ async def health_check():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000, ws_ping_interval=20, ws_ping_timeout=20)

@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 from pathlib import Path
 from typing import Optional, Dict, Any
 from datetime import datetime
@@ -114,7 +115,8 @@ Remember to check both the discussion file and (if relevant) the output file.
         
         # Set up options with session management
         # Try with model specification first, fallback to default if issues
-        use_model = "claude-sonnet-4-20250514"  # Sonnet 4 for speed/cost
+        # Get model from environment variable, default to Opus 4
+        use_model = os.getenv("CLAUDE_MODEL", "claude-opus-4-20250514")
         
         if self.session_id:
             # Continue existing conversation

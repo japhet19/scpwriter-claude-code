@@ -22,6 +22,39 @@
   border-right: 1px solid var(--terminal-green);
 }
 
+.infoSection {
+  margin: 0 0 20px 0;
+  padding: 12px 15px;
+  background: rgba(0, 255, 0, 0.05);
+  border: 1px dashed var(--terminal-green);
+  border-radius: 4px;
+}
+
+.infoText {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--terminal-green);
+  opacity: 0.9;
+}
+
+.infoIcon {
+  margin-right: 8px;
+  font-weight: bold;
+}
+
+.infoLink {
+  color: var(--terminal-amber);
+  text-decoration: underline;
+  margin-left: 4px;
+  transition: all 0.3s;
+}
+
+.infoLink:hover {
+  color: var(--terminal-green);
+  text-shadow: 0 0 5px var(--terminal-green);
+}
+
 .statusRow {
   display: flex;
   justify-content: space-between;
